@@ -2,7 +2,12 @@
 
 ### Dev POV
 
-Run
+### Initialize Virtual environment "env"
+```
+python -m venv env
+```
+
+### Activate the virtual environment
 ```
 ## Powershell
  `env\Scripts\Activate.ps1`
@@ -15,4 +20,11 @@ OR
 
 ## Linux
 `source env/bin/activate`
+```
+
+
+### To deactivate the virtual environment 
+
+```
+`deactivate`
 ```
