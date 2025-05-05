@@ -1,5 +1,5 @@
 # imports 
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect
 from flask_scss import Scss
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -24,11 +24,35 @@ class MyTask(db.Model):
     def __repr__(self):
         return f"<Task {self.id}>"
 
+
+# routes - URL endpoints
 # this decorator allows you to route to the homepage ("/") --> root directory
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def index():
     """First main page of our application"""
+
+    # add a new task to the database
+    if request.method == "POST":
+        # get the content of the task from the form - because content is the name of the input field in the form
+        current_task = request.form["content"]
+        new_task = MyTask(content=current_task)
+
+        try:
+            db.session.add(new_task) # add the new task to the database session
+            db.session.commit() # commit the changes to the database
+            return redirect("/") # redirect to the homepage to see the new task
+        except Exception as e:
+            print(f"There was an issue adding your task:\n{e}")
+            return redirect("/")
+    # see all new current tasks in the database
+    else:
+        tasks = MyTask.query.order_by(MyTask.created).all() # get all tasks from the database and order them by the date they were created
+        return render_template("index.html", tasks=tasks)
+
     return render_template("index.html") # access the index.html file from the templates folder
+
+
+
 
 # runner and debugger
 if __name__ in "__main__":
